@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shraddha's Birthday 🎬</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#fdf6ee;--warm:#f5e6d0;--gold:#c9942a;--gold2:#f0c060;
+  --ink:#1a1208;--rose:#c0415a;--film:#0c0a04;--hole:#2a2010;
+}
+html{scroll-behavior:smooth}
+body{background:var(--film);font-family:'Lato',sans-serif;color:var(--cream);overflow-x:hidden;cursor:none}
+
+/* cursor */
+.cur{position:fixed;width:14px;height:14px;border:2px solid var(--gold2);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s}
+.cur.big{width:36px;height:36px;background:rgba(240,192,96,.12)}
+
+/* grain */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:200;opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px}
+
+/* film edge strips */
+.film-edge{position:fixed;top:0;bottom:0;width:36px;z-index:150;background:#0a0804;display:flex;flex-direction:column;justify-content:space-around;align-items:center;padding:8px 0}
+.film-edge.left{left:0;border-right:2px solid #1e1a08}
+.film-edge.right{right:0;border-left:2px solid #1e1a08}
+.hole{width:16px;height:12px;background:var(--film);border-radius:2px;border:1.5px solid #2e2808;flex-shrink:0}
+
+/* progress */
+.progress{position:fixed;top:0;left:36px;right:36px;height:2px;z-index:300;background:rgba(255,255,255,.05)}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .1s}
+
+/* ── PHOTO LOADER BANNER ── */
+.photo-loader{
+  position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);
+  z-index:400;display:flex;align-items:center;gap:.9rem;
+  background:rgba(14,11,4,.88);border:1px solid rgba(201,148,42,.25);
+  padding:.7rem 1.2rem;backdrop-filter:blur(8px);
+  transition:opacity .4s,transform .4s;
+}
+.photo-loader.hidden{opacity:0;transform:translateX(-50%) translateY(20px);pointer-events:none}
+.pl-icon{font-size:1.3rem}
+.pl-text{font-size:.68rem;letter-spacing:.12em;color:rgba(255,255,255,.55);line-height:1.6}
+.pl-text strong{color:var(--gold2);font-weight:600;display:block;margin-bottom:.1rem}
+.pl-btn{
+  background:none;border:1px solid rgba(201,148,42,.4);
+  color:var(--gold2);font-family:'Lato',sans-serif;font-size:.7rem;
+  letter-spacing:.15em;padding:.45rem .9rem;cursor:pointer;
+  transition:background .2s,border-color .2s;white-space:nowrap;
+}
+.pl-btn:hover{background:rgba(201,148,42,.1);border-color:var(--gold)}
+.pl-close{background:none;border:none;color:rgba(255,255,255,.2);font-size:1rem;cursor:pointer;padding:0 0 0 .4rem;line-height:1}
+.pl-close:hover{color:rgba(255,255,255,.5)}
+#folderInput{display:none}
+
+/* sections */
+section{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 80px;overflow:hidden}
+
+/* cinematic bars */
+.cinemabars::before,.cinemabars::after{content:'';position:absolute;left:0;right:0;height:13vh;background:var(--film);z-index:8;pointer-events:none}
+.cinemabars::before{top:0}.cinemabars::after{bottom:0}
+
+/* scratch overlay */
+.scratch{position:absolute;inset:0;pointer-events:none;z-index:6;
+  background:repeating-linear-gradient(90deg,transparent,transparent 96px,rgba(255,255,255,.015) 97px,transparent 98px)}
+
+/* ═══ SCENE 1 — TITLE ═══ */
+.scene-title{background:#08060200}
+.title-pre{font-size:.65rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;opacity:0;animation:fadeUp .8s .4s forwards;z-index:10}
+.title-main{font-family:'Great Vibes',cursive;font-size:clamp(5rem,14vw,9.5rem);color:var(--cream);line-height:1;
+  text-shadow:0 0 60px rgba(201,148,42,.35),0 0 120px rgba(201,148,42,.1);
+  opacity:0;animation:fadeUp 1.2s .7s forwards;z-index:10}
+.title-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(.9rem,2.5vw,1.35rem);
+  color:rgba(253,246,238,.5);letter-spacing:.18em;margin-top:.5rem;
+  opacity:0;animation:fadeUp .8s 1.2s forwards;z-index:10}
+.title-date{margin-top:1.8rem;font-size:.7rem;letter-spacing:.4em;color:var(--gold);opacity:0;animation:fadeUp .8s 1.6s forwards;z-index:10}
+.title-from{margin-top:.4rem;font-size:.75rem;color:rgba(255,255,255,.3);letter-spacing:.2em;opacity:0;animation:fadeUp .8s 2s forwards;z-index:10}
+.scroll-cue{position:absolute;bottom:16vh;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fadeUp 1s 2.5s forwards}
+.scroll-cue span{font-size:.6rem;letter-spacing:.3em;color:rgba(255,255,255,.25)}
+.scroll-arr{width:1px;height:38px;background:linear-gradient(var(--gold),transparent);animation:arrPulse 1.8s infinite}
+@keyframes arrPulse{0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ SCENE 2 — LETTER ═══ */
+.scene-letter{background:var(--cream);color:var(--ink);padding-top:8rem;padding-bottom:8rem}
+.letter-wrap{max-width:660px;width:100%;background:white;
+  box-shadow:0 2px 0 #d0c4ac,0 4px 0 #c4b8a0,10px 14px 40px rgba(0,0,0,.14);
+  padding:3.5rem 3rem;position:relative;z-index:10;
+  transform:rotate(-1deg);opacity:0;transition:opacity .9s,transform .9s}
+.letter-wrap.visible{opacity:1}
+.rule{position:absolute;left:0;right:0;height:1px;background:rgba(100,80,50,.07)}
+.stamp{position:absolute;top:2rem;right:2rem;width:58px;height:72px;
+  border:2px solid rgba(201,148,42,.35);display:flex;align-items:center;justify-content:center;font-size:2rem;transform:rotate(3deg)}
+.stamp-lbl{position:absolute;bottom:-1.1rem;left:50%;transform:translateX(-50%);font-size:.45rem;letter-spacing:.18em;color:var(--gold);white-space:nowrap}
+.letter-dear{font-family:'Playfair Display',serif;font-style:italic;font-size:1.35rem;color:var(--rose);margin-bottom:1.4rem}
+.letter-body p{font-size:1rem;line-height:2;color:#3a2a1a;margin-bottom:1.1rem;font-weight:300}
+.letter-body strong{font-weight:700;color:var(--rose)}
+.letter-sign{margin-top:1.8rem;font-family:'Great Vibes',cursive;font-size:2.2rem;color:var(--rose)}
+.letter-ps{margin-top:.6rem;font-size:.8rem;color:rgba(58,42,26,.45);font-style:italic}
+
+/* ═══ SCENE 3 — FILM STRIP PHOTOS ═══ */
+.scene-film{background:#07050300;padding:6rem 20px}
+.scene-heading{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.8rem,4.5vw,2.8rem);color:var(--cream);margin-bottom:.4rem;z-index:10;text-align:center}
+.scene-sub{font-size:.68rem;letter-spacing:.25em;color:rgba(255,255,255,.28);text-align:center;margin-bottom:2.5rem;z-index:10}
+
+.filmstrip{width:100%;overflow-x:auto;z-index:10;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filmstrip::-webkit-scrollbar{display:none}
+.strip-track{display:flex;gap:0;background:#0e0b04;min-width:max-content;
+  border-top:24px solid #0e0b04;border-bottom:24px solid #0e0b04;position:relative}
+
+.film-frame{width:200px;height:220px;flex-shrink:0;position:relative;overflow:hidden;background:#1a1408;border-right:3px solid #2a2010;cursor:pointer;transition:transform .25s}
+.film-frame:hover{transform:scale(1.04);z-index:5}
+.film-frame img{width:100%;height:100%;object-fit:cover;opacity:.9;filter:sepia(.12) contrast(1.04);transition:opacity .3s,filter .3s;display:block}
+.film-frame:hover img{opacity:1;filter:none}
+.empty-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem}
+.empty-icon{font-size:1.6rem;opacity:.18}
+.empty-txt{font-size:.55rem;letter-spacing:.12em;color:rgba(255,255,255,.15);text-align:center;line-height:1.9}
+.frame-num{position:absolute;bottom:5px;right:7px;font-size:.5rem;letter-spacing:.1em;color:rgba(255,255,255,.18)}
+.drag-hint{z-index:10;text-align:center;margin-top:1.2rem;font-size:.65rem;letter-spacing:.2em;color:rgba(255,255,255,.18)}
+
+/* ═══ SCENE 4 — POLAROID BOARD ═══ */
+.scene-reasons{background:#f4ede0;color:var(--ink);padding:6rem 80px}
+.board-title{font-family:'Great Vibes',cursive;font-size:clamp(2.8rem,7vw,4.5rem);color:var(--rose);text-align:center;z-index:10;margin-bottom:2.8rem}
+.polaroid-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:1.8rem;max-width:860px;width:100%;z-index:10}
+.polaroid{background:white;padding:.9rem .9rem .5rem;box-shadow:2px 4px 14px rgba(0,0,0,.11);transform:var(--rot);transition:transform .3s,box-shadow .3s;cursor:default}
+.polaroid:hover{transform:rotate(0deg) scale(1.07);box-shadow:4px 8px 24px rgba(0,0,0,.2)}
+.polaroid-img{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--warm),#ead5b8);display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:.7rem;overflow:hidden}
+.polaroid-cap{text-align:center;font-family:'Playfair Display',serif;font-style:italic;font-size:.82rem;color:var(--rose);margin-bottom:.18rem}
+.polaroid-sub{text-align:center;font-size:.68rem;color:rgba(58,42,26,.48);line-height:1.55}
+
+/* ═══ SCENE 5 — COUNTDOWN ═══ */
+.scene-cd{background:#09070300}
+.cd-box{border:1px solid rgba(201,148,42,.18);padding:2.8rem 2.6rem 2.2rem;max-width:600px;width:100%;position:relative;z-index:10;text-align:center;background:rgba(255,255,255,.015)}
+.cd-box::before,.cd-box::after{content:'';position:absolute;width:14px;height:14px;border:2px solid var(--gold)}
+.cd-box::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.cd-box::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+.cd-title{font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;color:rgba(255,255,255,.35);letter-spacing:.22em;margin-bottom:1.8rem}
+.cd-row{display:flex;align-items:flex-end;justify-content:center;gap:.9rem;flex-wrap:wrap}
+.cd-unit{text-align:center;min-width:64px}
+.cd-n{font-family:'Playfair Display',serif;font-size:3.8rem;font-weight:700;color:var(--gold2);line-height:1;text-shadow:0 0 18px rgba(240,192,96,.35)}
+.cd-l{font-size:.58rem;letter-spacing:.25em;color:rgba(255,255,255,.22);margin-top:.25rem}
+.cd-dot{font-family:'Playfair Display';font-size:2.8rem;color:rgba(201,148,42,.25);line-height:1.25}
+.bd-live{display:none;font-family:'Great Vibes',cursive;font-size:2.8rem;color:var(--gold2);animation:fadeUp 1s both;text-shadow:0 0 28px rgba(240,192,96,.45)}
+
+/* ═══ SCENE 6 — FINALE ═══ */
+.scene-final{background:radial-gradient(ellipse at 50% 60%,#190b03 0%,#060402 100%);text-align:center}
+.final-glow{position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(201,148,42,.1),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.2)}}
+.final-tag{font-size:.6rem;letter-spacing:.4em;color:rgba(255,255,255,.2);margin-bottom:1.4rem;z-index:10}
+.final-heart{font-size:4.5rem;z-index:10;display:inline-block;animation:hbeat 1.4s ease-in-out infinite;filter:drop-shadow(0 0 18px rgba(192,65,90,.55))}
+@keyframes hbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.18)}28%{transform:scale(1)}42%{transform:scale(1.1)}70%{transform:scale(1)}}
+.final-name{font-family:'Great Vibes',cursive;font-size:clamp(3.5rem,11vw,6.5rem);color:var(--cream);text-shadow:0 0 40px rgba(201,148,42,.3);z-index:10;line-height:1;margin:.5rem 0}
+.final-msg{max-width:520px;font-size:.98rem;line-height:2;color:rgba(253,246,238,.5);z-index:10;margin:1.4rem auto}
+.final-msg strong{color:var(--gold2);font-weight:400}
+.final-sign{font-family:'Great Vibes',cursive;font-size:2.3rem;color:var(--rose);z-index:10;margin-top:1.8rem;filter:drop-shadow(0 0 8px rgba(192,65,90,.28))}
+
+/* lightbox */
+.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;align-items:center;justify-content:center;cursor:zoom-out}
+.lb.open{display:flex}
+.lb img{max-width:88vw;max-height:88vh;object-fit:contain;border:1px solid rgba(201,148,42,.25)}
+.lb-close{position:absolute;top:1.4rem;right:1.8rem;font-size:1.8rem;color:rgba(255,255,255,.35);cursor:pointer;background:none;border:none}
+
+/* confetti */
+#cvs{position:fixed;inset:0;pointer-events:none;z-index:400}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .85s,transform .85s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:600px){
+  section{padding:5rem 48px}
+  .film-edge{width:24px}
+  .hole{width:12px;height:9px}
+  .letter-wrap{padding:1.8rem 1.2rem}
+  .scene-reasons{padding:4rem 48px}
+  .polaroid-grid{grid-template-columns:repeat(2,1fr);gap:.9rem}
+  .cd-n{font-size:2.6rem}
+  .film-frame{width:160px;height:175px}
+  .photo-loader{width:88%;flex-wrap:wrap;justify-content:center;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<canvas id="cvs"></canvas>
+<div class="grain"></div>
+<div class="film-edge left" id="ledge"></div>
+<div class="film-edge right" id="redge"></div>
+<div class="progress"><div class="progress-fill" id="prog"></div></div>
+<div class="lb" id="lb"><button class="lb-close" id="lbClose">✕</button><img id="lbImg" src="" alt=""></div>
+
+<!-- ── PHOTO LOADER BANNER ── -->
+<div class="photo-loader" id="photoLoader">
+  <span class="pl-icon">🎞</span>
+  <div class="pl-text">
+    <strong>Load your photos into the film strip</strong>
+    Select the <em>photos</em> folder — all images load at once
+  </div>
+  <button class="pl-btn" id="plBtn">📁 Choose Photos Folder</button>
+  <button class="pl-close" id="plClose" title="dismiss">✕</button>
+</div>
+<input type="file" id="folderInput" accept="image/*" multiple webkitdirectory>
+
+<!-- ═══ SCENE 1 — TITLE ═══ -->
+<section class="scene-title cinemabars">
+  <div class="scratch"></div>
+  <p class="title-pre" style="font-size:.62rem;letter-spacing:.35em;color:rgba(255,255,255,.25)">Piyush &nbsp;presents</p>
+  <h1 class="title-main">Shraddha</h1>
+  <p class="title-sub">A Story About the Most Beautiful Person</p>
+  <p class="title-date">16 · MAY · 2025</p>
+  <p class="title-from">Made with love, just for you 💛</p>
+  <div class="scroll-cue">
+    <span>scroll to begin</span>
+    <div class="scroll-arr"></div>
+  </div>
+</section>
+
+<!-- ═══ SCENE 2 — LETTER ═══ -->
+<section class="scene-letter">
+  <div class="letter-wrap reveal" id="letterCard">
+    <div class="rule" style="top:4.2rem"></div><div class="rule" style="top:6.2rem"></div>
+    <div class="rule" style="top:8.2rem"></div><div class="rule" style="top:10.2rem"></div>
+    <div class="rule" style="top:12.2rem"></div><div class="rule" style="top:14.2rem"></div>
+    <div class="rule" style="top:16.2rem"></div><div class="rule" style="top:18.2rem"></div>
+    <div class="stamp">💌<span class="stamp-lbl">LOVE MAIL</span></div>
+    <p class="letter-dear">Dear Shraddha,</p>
+    <div class="letter-body">
+      <p>First of all — <strong>HAPPY BIRTHDAY! 🎉</strong><br>You made it to another year, and honestly? The whole world got a little luckier.</p>
+      <p>Every time I think about you — your smile, your energy, the way you laugh at your own jokes before you even finish them — I just think... <em>yeah, I picked really right. 😄</em></p>
+      <p>Today is 100% your day. No stress, no sadness allowed. Just cake 🎂, happiness, and <strong>me being super annoying about how much I love you.</strong></p>
+      <p>You deserve every single good thing — the big stuff AND the small stuff. Like finding a parking spot right away. Yeah. That too. All of it.</p>
+      <p>So eat the cake. Dance a little. And know that someone out here is <strong>really, really glad you were born.</strong> 🌸</p>
+    </div>
+    <div class="letter-sign">Always yours, Piyush</div>
+    <p class="letter-ps">P.S. — You looked beautiful today. Like always. 💛</p>
+  </div>
+</section>
+
+<!-- ═══ SCENE 3 — FILM STRIP ═══ -->
+<section class="scene-film">
+  <h2 class="scene-heading reveal">Our Little Story 🎞</h2>
+  <p class="scene-sub reveal">— tap a photo to open fullscreen — drag to explore —</p>
+
+  <div class="filmstrip">
+    <div class="strip-track" id="stripTrack">
+      <div class="film-frame" data-slot="0"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>01</span></div><span class="frame-num">01</span></div>
+      <div class="film-frame" data-slot="1"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>02</span></div><span class="frame-num">02</span></div>
+      <div class="film-frame" data-slot="2"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>03</span></div><span class="frame-num">03</span></div>
+      <div class="film-frame" data-slot="3"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>04</span></div><span class="frame-num">04</span></div>
+      <div class="film-frame" data-slot="4"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>05</span></div><span class="frame-num">05</span></div>
+      <div class="film-frame" data-slot="5"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>06</span></div><span class="frame-num">06</span></div>
+      <div class="film-frame" data-slot="6"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>07</span></div><span class="frame-num">07</span></div>
+      <div class="film-frame" data-slot="7"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>08</span></div><span class="frame-num">08</span></div>
+    </div>
+  </div>
+  <p class="drag-hint reveal">← scroll the film strip →</p>
+</section>
+
+<!-- ═══ SCENE 4 — POLAROID BOARD ═══ -->
+<section class="scene-reasons">
+  <h2 class="board-title reveal">Why You're My Favourite</h2>
+  <div class="polaroid-grid">
+    <div class="polaroid reveal" style="--rot:rotate(-3deg)">
+      <div class="polaroid-img">😂</div>
+      <p class="polaroid-cap">Your Laugh</p>
+      <p class="polaroid-sub">Honestly the best sound ever. Could fix any bad day in 2 seconds.</p>
+    </div>
+    <div class="polaroid reveal" style="--rot:rotate(2.5deg)">
+      <div class="polaroid-img">💪</div>
+      <p class="polaroid-cap">Your Strength</p>
+      <p class="polaroid-sub">You handle the hard stuff with so much grace. Really amazes me.</p>
+    </div>
+    <div class="polaroid reveal" style="--rot:rotate(-2deg)">
+      <div class="polaroid-img">🧠</div>
+      <p class="polaroid-cap">Your Mind</p>
+      <p class="polaroid-sub">Smart, sharp, full of ideas. Never stop thinking the way you do.</p>
+    </div>
+    <div class="polaroid reveal" style="--rot:rotate(3deg)">
+      <div class="polaroid-img">🌸</div>
+      <p class="polaroid-cap">Your Kindness</p>
+      <p class="polaroid-sub">You care so deeply. The world is better because of you.</p>
+    </div>
+    <div class="polaroid reveal" style="--rot:rotate(-1.5deg)">
+      <div class="polaroid-img">✨</div>
+      <p class="polaroid-cap">Your Vibe</p>
+      <p class="polaroid-sub">Walk into a room and it just gets brighter. That's actually you.</p>
+    </div>
+    <div class="polaroid reveal" style="--rot:rotate(2deg)">
+      <div class="polaroid-img">❤️</div>
+      <p class="polaroid-cap">Just You</p>
+      <p class="polaroid-sub">Every single part. The weird bits and the beautiful bits. All of it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SCENE 5 — COUNTDOWN ═══ -->
+<section class="scene-cd">
+  <div class="cd-box reveal">
+    <p class="cd-title">— time until the big day —</p>
+    <div class="cd-row" id="cdRow">
+      <div class="cd-unit"><div class="cd-n" id="cdD">--</div><div class="cd-l">Days</div></div>
+      <div class="cd-dot">·</div>
+      <div class="cd-unit"><div class="cd-n" id="cdH">--</div><div class="cd-l">Hours</div></div>
+      <div class="cd-dot">·</div>
+      <div class="cd-unit"><div class="cd-n" id="cdM">--</div><div class="cd-l">Mins</div></div>
+      <div class="cd-dot">·</div>
+      <div class="cd-unit"><div class="cd-n" id="cdS">--</div><div class="cd-l">Secs</div></div>
+    </div>
+    <p class="bd-live" id="bdLive">🎉 It's Shraddha's Birthday! 🎉</p>
+  </div>
+</section>
+
+<!-- ═══ SCENE 6 — FINALE ═══ -->
+<section class="scene-final">
+  <div class="final-glow"></div>
+  <p class="final-tag reveal">— the end, and a beautiful new beginning —</p>
+  <span class="final-heart reveal">💛</span>
+  <h2 class="final-name reveal">Happy Birthday</h2>
+  <div class="final-msg reveal">
+    <p>May this year give you <strong>everything you've wished for</strong> — big dreams and small joys both.</p>
+    <p style="margin-top:.7rem">May every morning feel like a fresh start, and every night feel like a warm hug. 🌙</p>
+    <p style="margin-top:.7rem">You are so loved. <strong>More than you even know.</strong></p>
+  </div>
+  <div class="final-sign reveal">— Always yours, Piyush 💌</div>
+</section>
+
+<script>
+/* cursor */
+const cur=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('button,.film-frame,.polaroid').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('big'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('big'));
+});
+
+/* film edge holes */
+function buildEdge(id){const el=document.getElementById(id);for(let i=0;i<40;i++){const h=document.createElement('div');h.className='hole';el.appendChild(h);}}
+buildEdge('ledge');buildEdge('redge');
+
+/* scroll progress */
+const prog=document.getElementById('prog');
+window.addEventListener('scroll',()=>{
+  const p=(scrollY/(document.body.scrollHeight-innerHeight))*100;
+  prog.style.width=Math.min(p,100)+'%';
+});
+
+/* reveal */
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ── FOLDER PHOTO LOADER ── */
+const folderInput = document.getElementById('folderInput');
+const plBtn       = document.getElementById('plBtn');
+const plClose     = document.getElementById('plClose');
+const photoLoader = document.getElementById('photoLoader');
+const frames      = document.querySelectorAll('.film-frame');
+
+plBtn.addEventListener('click', () => folderInput.click());
+plClose.addEventListener('click', () => photoLoader.classList.add('hidden'));
+
+folderInput.addEventListener('change', function() {
+  // Filter only image files, sort by name so order is predictable
+  const imageFiles = Array.from(this.files)
+    .filter(f => f.type.startsWith('image/'))
+    .sort((a,b) => a.name.localeCompare(b.name, undefined, {numeric:true}));
+
+  if(imageFiles.length === 0) return;
+
+  const count = Math.min(imageFiles.length, frames.length);
+
+  imageFiles.slice(0, count).forEach((file, i) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const frame = frames[i];
+      // Clear placeholder
+      const ph = frame.querySelector('.empty-ph');
+      if(ph) ph.remove();
+      // Remove old img if any
+      const old = frame.querySelector('img');
+      if(old) old.remove();
+      // Add new img
+      const img = document.createElement('img');
+      img.src = ev.target.result;
+      frame.insertBefore(img, frame.querySelector('.frame-num'));
+      img.addEventListener('click', () => openLb(ev.target.result));
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Hide the banner after loading
+  setTimeout(() => photoLoader.classList.add('hidden'), 800);
+});
+
+/* lightbox */
+const lb    = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+function openLb(src){lbImg.src=src;lb.classList.add('open');}
+document.getElementById('lbClose').addEventListener('click',()=>lb.classList.remove('open'));
+lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('open');});
+
+/* countdown */
+function tick(){
+  const now=new Date();
+  const bd=new Date(now.getFullYear(),4,16,0,0,0);
+  const bdEnd=new Date(now.getFullYear(),4,16,23,59,59);
+  if(now>=bd&&now<=bdEnd){
+    document.getElementById('cdRow').style.display='none';
+    document.getElementById('bdLive').style.display='block';
+    launchConfetti();return;
+  }
+  if(now>bdEnd)bd.setFullYear(bd.getFullYear()+1);
+  const diff=bd-now;
+  document.getElementById('cdD').textContent=String(Math.floor(diff/86400000)).padStart(2,'0');
+  document.getElementById('cdH').textContent=String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cdM').textContent=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cdS').textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+tick();setInterval(tick,1000);
+
+/* confetti */
+function launchConfetti(){
+  const cv=document.getElementById('cvs');cv.width=innerWidth;cv.height=innerHeight;
+  const ctx=cv.getContext('2d');
+  const cols=['#c9942a','#f0c060','#c0415a','#fdf6ee','#d4a0ff','#ff9ec4','#80eaca'];
+  const pieces=Array.from({length:200},()=>({
+    x:Math.random()*cv.width,y:Math.random()*cv.height-cv.height,
+    w:Math.random()*10+4,h:Math.random()*5+2,
+    c:cols[Math.floor(Math.random()*cols.length)],
+    rot:Math.random()*360,rv:(Math.random()-.5)*4,
+    vy:Math.random()*3+1.5,vx:(Math.random()-.5)*1.5
+  }));
+  (function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pieces.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();p.y+=p.vy;p.x+=p.vx;p.rot+=p.rv;if(p.y>cv.height){p.y=-10;p.x=Math.random()*cv.width;}});
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* filmstrip drag */
+const strip=document.querySelector('.filmstrip');
+let isDown=false,startX,scrollL;
+strip.addEventListener('mousedown',e=>{isDown=true;startX=e.pageX-strip.offsetLeft;scrollL=strip.scrollLeft;strip.style.cursor='grabbing';});
+['mouseleave','mouseup'].forEach(ev=>strip.addEventListener(ev,()=>{isDown=false;strip.style.cursor='default';}));
+strip.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();strip.scrollLeft=scrollL-(e.pageX-strip.offsetLeft-startX);});
+</script>
+</body>
+</html>
