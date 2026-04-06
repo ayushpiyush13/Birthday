@@ -33,29 +33,6 @@ body{background:var(--film);font-family:'Lato',sans-serif;color:var(--cream);ove
 .progress{position:fixed;top:0;left:36px;right:36px;height:2px;z-index:300;background:rgba(255,255,255,.05)}
 .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .1s}
 
-/* ── PHOTO LOADER BANNER ── */
-.photo-loader{
-  position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);
-  z-index:400;display:flex;align-items:center;gap:.9rem;
-  background:rgba(14,11,4,.88);border:1px solid rgba(201,148,42,.25);
-  padding:.7rem 1.2rem;backdrop-filter:blur(8px);
-  transition:opacity .4s,transform .4s;
-}
-.photo-loader.hidden{opacity:0;transform:translateX(-50%) translateY(20px);pointer-events:none}
-.pl-icon{font-size:1.3rem}
-.pl-text{font-size:.68rem;letter-spacing:.12em;color:rgba(255,255,255,.55);line-height:1.6}
-.pl-text strong{color:var(--gold2);font-weight:600;display:block;margin-bottom:.1rem}
-.pl-btn{
-  background:none;border:1px solid rgba(201,148,42,.4);
-  color:var(--gold2);font-family:'Lato',sans-serif;font-size:.7rem;
-  letter-spacing:.15em;padding:.45rem .9rem;cursor:pointer;
-  transition:background .2s,border-color .2s;white-space:nowrap;
-}
-.pl-btn:hover{background:rgba(201,148,42,.1);border-color:var(--gold)}
-.pl-close{background:none;border:none;color:rgba(255,255,255,.2);font-size:1rem;cursor:pointer;padding:0 0 0 .4rem;line-height:1}
-.pl-close:hover{color:rgba(255,255,255,.5)}
-#folderInput{display:none}
-
 /* sections */
 section{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 80px;overflow:hidden}
 
@@ -115,10 +92,7 @@ section{position:relative;min-height:100vh;display:flex;flex-direction:column;al
 .film-frame:hover{transform:scale(1.04);z-index:5}
 .film-frame img{width:100%;height:100%;object-fit:cover;opacity:.9;filter:sepia(.12) contrast(1.04);transition:opacity .3s,filter .3s;display:block}
 .film-frame:hover img{opacity:1;filter:none}
-.empty-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem}
-.empty-icon{font-size:1.6rem;opacity:.18}
-.empty-txt{font-size:.55rem;letter-spacing:.12em;color:rgba(255,255,255,.15);text-align:center;line-height:1.9}
-.frame-num{position:absolute;bottom:5px;right:7px;font-size:.5rem;letter-spacing:.1em;color:rgba(255,255,255,.18)}
+.frame-num{position:absolute;bottom:5px;right:7px;font-size:.5rem;letter-spacing:.1em;color:rgba(255,255,255,.35);z-index:2}
 .drag-hint{z-index:10;text-align:center;margin-top:1.2rem;font-size:.65rem;letter-spacing:.2em;color:rgba(255,255,255,.18)}
 
 /* ═══ SCENE 4 — POLAROID BOARD ═══ */
@@ -179,7 +153,6 @@ section{position:relative;min-height:100vh;display:flex;flex-direction:column;al
   .polaroid-grid{grid-template-columns:repeat(2,1fr);gap:.9rem}
   .cd-n{font-size:2.6rem}
   .film-frame{width:160px;height:175px}
-  .photo-loader{width:88%;flex-wrap:wrap;justify-content:center;text-align:center}
 }
 </style>
 </head>
@@ -192,18 +165,6 @@ section{position:relative;min-height:100vh;display:flex;flex-direction:column;al
 <div class="film-edge right" id="redge"></div>
 <div class="progress"><div class="progress-fill" id="prog"></div></div>
 <div class="lb" id="lb"><button class="lb-close" id="lbClose">✕</button><img id="lbImg" src="" alt=""></div>
-
-<!-- ── PHOTO LOADER BANNER ── -->
-<div class="photo-loader" id="photoLoader">
-  <span class="pl-icon">🎞</span>
-  <div class="pl-text">
-    <strong>Load your photos into the film strip</strong>
-    Select the <em>photos</em> folder — all images load at once
-  </div>
-  <button class="pl-btn" id="plBtn">📁 Choose Photos Folder</button>
-  <button class="pl-close" id="plClose" title="dismiss">✕</button>
-</div>
-<input type="file" id="folderInput" accept="image/*" multiple webkitdirectory>
 
 <!-- ═══ SCENE 1 — TITLE ═══ -->
 <section class="scene-title cinemabars">
@@ -247,14 +208,53 @@ section{position:relative;min-height:100vh;display:flex;flex-direction:column;al
 
   <div class="filmstrip">
     <div class="strip-track" id="stripTrack">
-      <div class="film-frame" data-slot="0"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>01</span></div><span class="frame-num">01</span></div>
-      <div class="film-frame" data-slot="1"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>02</span></div><span class="frame-num">02</span></div>
-      <div class="film-frame" data-slot="2"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>03</span></div><span class="frame-num">03</span></div>
-      <div class="film-frame" data-slot="3"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>04</span></div><span class="frame-num">04</span></div>
-      <div class="film-frame" data-slot="4"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>05</span></div><span class="frame-num">05</span></div>
-      <div class="film-frame" data-slot="5"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>06</span></div><span class="frame-num">06</span></div>
-      <div class="film-frame" data-slot="6"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>07</span></div><span class="frame-num">07</span></div>
-      <div class="film-frame" data-slot="7"><div class="empty-ph"><span class="empty-icon">🎞</span><span class="empty-txt">FRAME<br>08</span></div><span class="frame-num">08</span></div>
+
+      <!-- ╔══════════════════════════════════════════════════╗ -->
+      <!-- ║  PHOTO PATHS — replace each src with your path  ║ -->
+      <!-- ║  Use relative path  : "photos/pic1.jpg"         ║ -->
+      <!-- ║  Use absolute path  : "C:/Users/.../pic1.jpg"   ║ -->
+      <!-- ╚══════════════════════════════════════════════════╝ -->
+
+      <div class="film-frame" data-slot="0">
+        <img src="photo1.jpg" alt="Memory 1" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>01</span></div><span class=frame-num>01</span>'">
+        <span class="frame-num">01</span>
+      </div>
+
+      <div class="film-frame" data-slot="1">
+        <img src="photo2.jpg" alt="Memory 2" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>02</span></div><span class=frame-num>02</span>'">
+        <span class="frame-num">02</span>
+      </div>
+
+      <div class="film-frame" data-slot="2">
+        <img src="photo3.jpg" alt="Memory 3" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>03</span></div><span class=frame-num>03</span>'">
+        <span class="frame-num">03</span>
+      </div>
+
+      <div class="film-frame" data-slot="3">
+        <img src="photo4.jpg" alt="Memory 4" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>04</span></div><span class=frame-num>04</span>'">
+        <span class="frame-num">04</span>
+      </div>
+
+      <div class="film-frame" data-slot="4">
+        <img src="photo5.jpg" alt="Memory 5" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>05</span></div><span class=frame-num>05</span>'">
+        <span class="frame-num">05</span>
+      </div>
+
+      <div class="film-frame" data-slot="5">
+        <img src="photo6.jpg" alt="Memory 6" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>06</span></div><span class=frame-num>06</span>'">
+        <span class="frame-num">06</span>
+      </div>
+
+      <div class="film-frame" data-slot="6">
+        <img src="photo7.jpg" alt="Memory 7" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>07</span></div><span class=frame-num>07</span>'">
+        <span class="frame-num">07</span>
+      </div>
+
+      <div class="film-frame" data-slot="7">
+        <img src="photo8.jpg" alt="Memory 8" onerror="this.parentElement.innerHTML='<div class=empty-ph><span class=empty-icon>🎞</span><span class=empty-txt>FRAME<br>08</span></div><span class=frame-num>08</span>'">
+        <span class="frame-num">08</span>
+      </div>
+
     </div>
   </div>
   <p class="drag-hint reveal">← scroll the film strip →</p>
@@ -352,55 +352,16 @@ window.addEventListener('scroll',()=>{
 const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-/* ── FOLDER PHOTO LOADER ── */
-const folderInput = document.getElementById('folderInput');
-const plBtn       = document.getElementById('plBtn');
-const plClose     = document.getElementById('plClose');
-const photoLoader = document.getElementById('photoLoader');
-const frames      = document.querySelectorAll('.film-frame');
-
-plBtn.addEventListener('click', () => folderInput.click());
-plClose.addEventListener('click', () => photoLoader.classList.add('hidden'));
-
-folderInput.addEventListener('change', function() {
-  // Filter only image files, sort by name so order is predictable
-  const imageFiles = Array.from(this.files)
-    .filter(f => f.type.startsWith('image/'))
-    .sort((a,b) => a.name.localeCompare(b.name, undefined, {numeric:true}));
-
-  if(imageFiles.length === 0) return;
-
-  const count = Math.min(imageFiles.length, frames.length);
-
-  imageFiles.slice(0, count).forEach((file, i) => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const frame = frames[i];
-      // Clear placeholder
-      const ph = frame.querySelector('.empty-ph');
-      if(ph) ph.remove();
-      // Remove old img if any
-      const old = frame.querySelector('img');
-      if(old) old.remove();
-      // Add new img
-      const img = document.createElement('img');
-      img.src = ev.target.result;
-      frame.insertBefore(img, frame.querySelector('.frame-num'));
-      img.addEventListener('click', () => openLb(ev.target.result));
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Hide the banner after loading
-  setTimeout(() => photoLoader.classList.add('hidden'), 800);
-});
-
-/* lightbox */
+/* lightbox — attach to all film-frame images */
 const lb    = document.getElementById('lb');
 const lbImg = document.getElementById('lbImg');
 function openLb(src){lbImg.src=src;lb.classList.add('open');}
 document.getElementById('lbClose').addEventListener('click',()=>lb.classList.remove('open'));
 lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('open');});
+
+document.querySelectorAll('.film-frame img').forEach(img=>{
+  img.addEventListener('click',()=>openLb(img.src));
+});
 
 /* countdown */
 function tick(){
